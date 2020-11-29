@@ -4,7 +4,7 @@ A new Flutter application to show notification
 
 ## Screenshots
 
-<img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/1.png"><img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/2.png" hspace=24/><img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/3.png"><img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/4.png"/> 
+<img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/1.png"><img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/2.png" hspace=24/><img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/3.png"><img height=550 width=275 src="https://github.com/sanxy/FlutterLocalNotification/blob/main/Screenshots/4.png" hspace=24/> 
 
 ## Flutter Packages used 
 <table style="width:10%">

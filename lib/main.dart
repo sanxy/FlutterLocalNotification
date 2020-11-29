@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Local Notifications'),
     );
   }
 }
@@ -46,17 +46,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  FlutterLocalNotificationsPlugin flutterNotificationPlugin;
+
+  @override
+  void initState() {
+
+    var initializationSettingsAndroid = new AndroidInitializationSettings('app_icon');
+
+    var initializationSettingsIOS = new IOSInitializationSettings();
+
+    var initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    flutterNotificationPlugin = FlutterLocalNotificationsPlugin();
+
+    flutterNotificationPlugin.initialize(initializationSettings,onSelectNotification: onSelectNotification);
+
+
+  }
+
+  Future onSelectNotification(String payload) async{
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text(
+              "Hello Everyone"
+          ),
+          content: Text(
+              "$payload"
+          ),
+        )
+    );
   }
 
   @override
@@ -76,38 +96,175 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                child: Text(
+                    "Notification with Default Sound"
+                ),
+                onPressed: () {
+                  notificationDefaultSound();
+                },
+              ),
+
+              RaisedButton(
+                child: Text(
+                    "Notification without Sound"
+                ),
+                onPressed: () {
+                  notificationNoSound();
+                },
+              ),
+
+              RaisedButton(
+                child: Text(
+                    "Notification with Custom Sound"
+                ),
+                onPressed: () {
+                  notificationCustomSound();
+                },
+              ),
+
+              RaisedButton(
+                child: Text(
+                  "Scheduled",
+                ),
+                onPressed: () {
+                  notificationScheduled();
+                },
+              )
+            ],
+          )
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+
+  Future notificationDefaultSound() async{
+
+    var androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'Notification Channel ID',
+      'Channel Name',
+      'Description',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    var iOSPlatformChannelSpecifics =
+    IOSNotificationDetails();
+
+    var platformChannelSpecifics =
+    NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics
+    );
+
+    flutterNotificationPlugin.show(
+        0,
+        'New Alert',
+        'How to show Local Notification',
+        platformChannelSpecifics,
+        payload: 'Default Sound'
+    );
+  }
+
+  Future notificationNoSound() async {
+
+    var androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'Notification Channel ID',
+      'Channel Name',
+      'Description',
+      playSound: false,
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    var iOSPlatformChannelSpecifics =
+    IOSNotificationDetails(
+        presentSound: false
+    );
+
+    var platformChannelSpecifics =
+    NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics
+    );
+
+    flutterNotificationPlugin.show(
+        0,
+        'New Alert',
+        'How to show Local Notification',
+        platformChannelSpecifics,
+        payload: 'No Sound'
+    );
+
+
+  }
+
+  Future<void> notificationCustomSound() async{
+
+    var androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'Notification Channel ID',
+      'Channel Name',
+      'Description',
+      // sound: 'slow_spring_board',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    var iOSPlatformChannelSpecifics =
+    IOSNotificationDetails(
+        sound: 'slow_spring_board.aiff'
+    );
+
+    var platformChannelSpecifics =
+    NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics
+    );
+
+    flutterNotificationPlugin.show(
+        0,
+        'New Alert',
+        'How to show Local Notification',
+        platformChannelSpecifics,
+        payload: 'Custom Sound'
+    );
+
+  }
+
+  Future<void> notificationScheduled() async {
+    int hour = 19;
+    var ogValue = hour;
+    int minute = 05;
+
+    var time = Time(hour,minute,20);
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'repeatDailyAtTime channel id',
+      'repeatDailyAtTime channel name',
+      'repeatDailyAtTime description',
+      importance: Importance.max,
+      // sound: 'slow_spring_board',
+      ledColor: Color(0xFF3EB16F),
+      ledOffMs: 1000,
+      ledOnMs: 1000,
+      enableLights: true,
+    );
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+
+    await flutterNotificationPlugin.showDailyAtTime(4, 'show daily title',
+      'Daily notification shown',time, platformChannelSpecifics,payload: "Hello",);
+
+    print('Set at '+time.minute.toString()+" +"+time.hour.toString());
+
+
+  }
 }
+
